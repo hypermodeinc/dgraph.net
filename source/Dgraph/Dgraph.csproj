@@ -23,7 +23,7 @@
     <PackageReference Include="Grpc.Core" Version="2.46.6" />
     <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
     <PackageReference Include="Grpc.Tools" Version="2.71.0" PrivateAssets="All" />
-    <PackageReference Include="FluentResults" Version="3.16.0" />
+    <PackageReference Include="FluentResults" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
