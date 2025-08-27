@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Dgraph.tests.e2e.Tests.TestClasses
 {
-    public class FriendQueries
+    public static class FriendQueries
     {
         public static string QueryByUid(string uid) =>
             "{  "
@@ -49,7 +49,8 @@ query people($name: string) {
 
         public static void AssertStringIsPerson(string json, Person person)
         {
-            var people = JObject.Parse(json)["q"].ToObject<List<Person>>();
+            var people = JObject.Parse(json)?["q"]?.ToObject<List<Person>>();
+            people.Should().NotBeNull();
             people.Count.Should().Be(1);
             people[0].Should().BeEquivalentTo(person);
         }

@@ -2,20 +2,20 @@
 
   <PropertyGroup>
     <PackageId>Dgraph</PackageId>
-    <Title>Dgraph Client for .NET </Title>
-    <Authors>Michael Compton, Ahmed El Bannan</Authors>
-    <Company>Hypermode Inc</Company>
-    <Product>.Net Dgraph Client</Product>
     <Description>Dgraph Client for .NET</Description>
-    <Copyright>Hypermode Inc</Copyright>
-    <PackageProjectUrl>https://github.com/hypermodeinc/dgraph.net</PackageProjectUrl>
+    <Copyright>© Hypermode Inc</Copyright>
     <RepositoryUrl>https://github.com/hypermodeinc/dgraph.net</RepositoryUrl>
-    <IncludeSymbols>True</IncludeSymbols>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageVersion>23.0.0-alpha</PackageVersion>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFrameworks>net462;netstandard2.1;net8.0;net9.0</TargetFrameworks>
+    <Version>25.0.0-alpha.1</Version>
+    <!-- <GenerateDocumentationFile>true</GenerateDocumentationFile> -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,9 +26,11 @@
     <PackageReference Include="FluentResults" Version="4.0.0" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462' or '$(TargetFramework)' == 'netstandard2.1'">
+    <PackageReference Include="Polyfill" Version="8.8.0" PrivateAssets="All" />
+  </ItemGroup>
+
   <ItemGroup>
-    <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
-    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     <Protobuf Include="github.com/dgraph-io/dgo/protos/api.proto" />
   </ItemGroup>
 

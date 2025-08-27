@@ -10,7 +10,7 @@ namespace Dgraph
 {
     public static class DgraphCloudChannel
     {
-        private const string CloudPort = "443";
+        private const int CloudPort = 443;
 
         /// <summary>
         /// Create a new TLS connection to a Dgraph Cloud backend.
@@ -33,7 +33,7 @@ namespace Dgraph
             {
                 grpcUri = $"https://{grpcUri}";
             }
-            if (Uri.TryCreate(grpcUri, UriKind.Absolute, out Uri u) && u.Host.Contains("."))
+            if (Uri.TryCreate(grpcUri, UriKind.Absolute, out Uri? u) && u.Host.Contains('.'))
             {
                 if (u.Host.Contains(".grpc."))
                 {

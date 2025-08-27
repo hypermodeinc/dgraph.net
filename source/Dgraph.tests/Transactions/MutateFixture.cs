@@ -71,8 +71,8 @@ namespace Dgraph.tests.Transactions
             var result = await txn.Do(req);
 
             result.IsFailed.Should().Be(true);
-            result.Errors.First().Should().BeOfType<ExceptionalError>();
-            (result.Errors.First() as ExceptionalError).Exception.Should().BeOfType<RpcException>();
+            result.Errors[0].Should().BeOfType<ExceptionalError>();
+            result.Errors[0].As<ExceptionalError>().Exception.Should().BeOfType<RpcException>();
         }
 
         [Test]

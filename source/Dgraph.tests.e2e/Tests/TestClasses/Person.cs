@@ -11,13 +11,19 @@ namespace Dgraph.tests.e2e.Tests.TestClasses
     [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
     public class Person
     {
-        public string Uid { get; set; }
+        public required string Uid { get; set; }
+
         [JsonProperty("dgraph.type")]
         public string Type { get; } = "Person";
-        public string Name { get; set; }
-        public List<Person> Friends { get; } = new List<Person>();
+
+        public required string Name { get; set; }
+
+        public List<Person> Friends { get; } = [];
+
         public DateTime Dob { get; set; }
+
         public double Height { get; set; }
-        public List<int> Scores { get; } = new List<int>();
+
+        public List<int> Scores { get; } = [];
     }
 }

@@ -30,9 +30,21 @@ namespace Dgraph.Transactions
 
         #region IQuery
 
+#if NETFRAMEWORK
+        Task<Result<Response>> IQuery.Query(string queryString, CallOptions? options)
+        {
+            return ((IQuery)this).QueryWithVars(queryString, [], options);
+        }
+      
+        Task<Result<Response>> IQuery.QueryRDF(string queryString, CallOptions? options)
+        {
+            return ((IQuery)this).QueryRDFWithVars(queryString, [], options);
+        }
+#endif
+
         Task<Result<Response>> IQuery.QueryWithVars(
             string queryString,
-            Dictionary<string, string> varMap,
+            Dictionary<string, string>? varMap,
             CallOptions? options
         )
         {
@@ -51,7 +63,7 @@ namespace Dgraph.Transactions
         Task<Result<Response>> IQuery.QueryRDFWithVars(
             string queryString,
             Dictionary<string, string> varMap,
-            Grpc.Core.CallOptions? options
+            CallOptions? options
         )
         {
             var request = new Api.Request
@@ -69,6 +81,26 @@ namespace Dgraph.Transactions
         #endregion
 
         #region ITransaction
+
+#if NETFRAMEWORK
+        Task<Result<Response>> ITransaction.Mutate(Api.Mutation mutation, CallOptions? options)
+        {
+            var request = new Api.Request();
+            request.Mutations.Add(mutation);
+            request.CommitNow = mutation.CommitNow;
+            return ((ITransaction)this).Do(request, options);
+        }
+
+        Task<Result<Response>> ITransaction.Mutate(MutationBuilder mutation, CallOptions? options)
+        {
+            return ((ITransaction)this).Mutate(mutation.Mutation, options);
+        }
+
+        Task<Result<Response>> ITransaction.Do(RequestBuilder request, CallOptions? options)
+        {
+            return ((ITransaction)this).Do(request.Request, options);
+        }
+#endif
 
         async Task<Result<Response>> ITransaction.Do(Api.Request request, CallOptions? options)
         {
@@ -114,7 +146,7 @@ namespace Dgraph.Transactions
             request.ReadOnly = ReadOnly;
 
             var response = await Client.DgraphExecute(
-                async (dg) => Result.Ok<Response>(
+                async (dg) => Result.Ok(
                     new Response(await dg.QueryAsync(
                         request,
                         options ?? new CallOptions())

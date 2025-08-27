@@ -9,13 +9,13 @@ namespace Dgraph.Transactions
     {
         public readonly Api.Response DgraphResponse;
 
-        private Lazy<Dictionary<string, string>> _Uids;
+        private readonly Lazy<Dictionary<string, string>> _uids;
 
         internal Response(Api.Response dgraphResponse)
         {
             DgraphResponse = dgraphResponse;
 
-            _Uids = new Lazy<Dictionary<string, string>>(
+            _uids = new Lazy<Dictionary<string, string>>(
                 () => new Dictionary<string, string>(DgraphResponse.Uids));
         }
 
@@ -23,6 +23,6 @@ namespace Dgraph.Transactions
 
         public string Rdf => DgraphResponse.Rdf.ToStringUtf8();
 
-        public Dictionary<string, string> Uids => _Uids.Value;
+        public Dictionary<string, string> Uids => _uids.Value;
     }
 }

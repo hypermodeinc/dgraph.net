@@ -11,10 +11,10 @@ namespace Dgraph
 {
     /// <summary>
     /// An IDgraphClient is connected to a Dgraph cluster (to one or more Alpha
-    /// nodes).  Once a client is made, the client manages the connections and 
-    // shuts all connections down on exit.
+    /// nodes).  Once a client is made, the client manages the connections and
+    /// shuts all connections down on exit.
     /// </summary>
-    /// <exception cref="System.ObjectDisposedException">Thrown if the client
+    /// <exception cref="ObjectDisposedException">Thrown if the client
     /// has been disposed and calls are made.</exception>
     public interface IDgraphClient : IDisposable
     {
@@ -22,10 +22,14 @@ namespace Dgraph
         /// Log in the client to the default namespace (0) using the provided
         /// credentials. Valid for the duration the client is alive.
         /// </summary>
+#if NETFRAMEWORK
+        Task<Result> Login(string user, string password, CallOptions? options = null);
+#else
         Task<Result> Login(string user, string password, CallOptions? options = null)
         {
             return LoginIntoNamespace(user, password, 0, options);
         }
+#endif
 
         /// <summary>
         /// Log in the client to the provided namespace using the provided
@@ -44,17 +48,19 @@ namespace Dgraph
         ITransaction NewTransaction();
 
         /// <summary>
-        /// Create a transaction that can only query.  
-        ///
+        /// <para>Create a transaction that can only query.</para>
+        /// <para>
         /// Read-only transactions circumvent the usual consensus protocol
-        /// and so can increase read speed. 
-        ///
+        /// and so can increase read speed.
+        /// </para>
+        /// <para>
         /// Best effort tells Dgraph to use transaction time stamps from
-        /// memory on best-effort basis to reduce the number of outbound 
-        /// requests to Zero. This may yield improved latencies in read-bound 
+        /// memory on best-effort basis to reduce the number of outbound
+        /// requests to Zero. This may yield improved latencies in read-bound
         /// workloads where linearizable reads are not strictly needed.
+        /// </para
         /// </summary>
-        IQuery NewReadOnlyTransaction(Boolean bestEffort = false);
+        IQuery NewReadOnlyTransaction(bool bestEffort = false);
 
         /// <summary>
         /// Returns the Dgraph version string.

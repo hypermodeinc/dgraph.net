@@ -30,8 +30,5 @@ E2E-Logs
 # JetBrains IntelliJ IDEA
 .idea/
 
-# VS Code workspace settings
-**/.vscode/settings.json
-
 # Mac
 .DS_Store

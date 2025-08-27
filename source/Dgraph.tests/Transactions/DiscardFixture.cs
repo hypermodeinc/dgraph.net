@@ -75,8 +75,8 @@ namespace Dgraph.tests.Transactions
             var result = await txn.Discard();
 
             result.IsFailed.Should().BeTrue();
-            result.Errors.First().Should().BeOfType<ExceptionalError>();
-            (result.Errors.First() as ExceptionalError).Exception.Should().BeOfType<RpcException>();
+            result.Errors[0].Should().BeOfType<ExceptionalError>();
+            result.Errors[0].As<ExceptionalError>().Exception.Should().BeOfType<RpcException>();
             txn.TransactionState.Should().Be(TransactionState.Aborted);
         }
 

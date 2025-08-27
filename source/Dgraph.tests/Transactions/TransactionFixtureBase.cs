@@ -30,12 +30,12 @@ namespace Dgraph.tests.Transactions
         }
 
         protected List<Func<Task<ResultBase>>> GetAllTestFunctions(ITransaction txn) =>
-            new List<Func<Task<ResultBase>>> {
+            [
                 async () => await txn.Do(new RequestBuilder().
                     WithMutations(new MutationBuilder().SetJson("json"))),
                 async () => await txn.Query("query"),
                 async () => await txn.QueryWithVars("query", null),
                 async () => await txn.Commit()
-            };
+            ];
     }
 }

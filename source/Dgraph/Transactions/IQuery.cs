@@ -8,13 +8,6 @@ using Grpc.Core;
 
 namespace Dgraph.Transactions
 {
-    public enum TransactionState
-    {
-        OK,
-        Committed,
-        Aborted,
-        Error
-    }
 
     /// <summary>
     /// A read-only transaction that cannot commit mutations.
@@ -26,27 +19,35 @@ namespace Dgraph.Transactions
         /// <summary>
         /// Run a query and return a JSON response.
         /// </summary>
+#if NETFRAMEWORK
+        Task<Result<Response>> Query(string queryString, CallOptions? options = null);
+#else
         Task<Result<Response>> Query(string queryString, CallOptions? options = null)
         {
-            return QueryWithVars(queryString, new Dictionary<string, string>(), options);
+            return QueryWithVars(queryString, [], options);
         }
+#endif
 
         /// <summary>
         /// Run a query with variables and return a JSON response.
         /// </summary>
         Task<Result<Response>> QueryWithVars(
             string queryString,
-            Dictionary<string, string> varMap,
+            Dictionary<string, string>? varMap,
             CallOptions? options = null
         );
 
         /// <summary>
         /// Run a query with variables and return a RDF response.
         /// </summary>
+#if NETFRAMEWORK
+        Task<Result<Response>> QueryRDF(string queryString, CallOptions? options = null);
+#else
         Task<Result<Response>> QueryRDF(string queryString, CallOptions? options = null)
         {
-            return QueryRDFWithVars(queryString, new Dictionary<string, string>(), options);
+            return QueryRDFWithVars(queryString, [], options);
         }
+#endif
 
         /// <summary>
         /// Run a query and return a RDF response.

@@ -35,7 +35,7 @@ namespace Dgraph.tests.e2e.Tests
 
             // mutate & query interleaving
             await NoDirtyReads(client);
-            await TransactionsAreSerlializable(client);
+            await TransactionsAreSerializable(client);
             await DiscardedTransactionsHaveNoEffect(client);
 
             // mutate & mutate interleaving
@@ -83,12 +83,12 @@ namespace Dgraph.tests.e2e.Tests
             FriendQueries.AssertStringIsPerson(queryByName.Value.Json, person);
         }
 
-        private async Task TransactionsAreSerlializable(IDgraphClient client)
+        private async Task TransactionsAreSerializable(IDgraphClient client)
         {
             using var txn1 = client.NewTransaction();
             using var txn2 = client.NewTransaction();
 
-            var person = MintAPerson(nameof(TransactionsAreSerlializable));
+            var person = MintAPerson(nameof(TransactionsAreSerializable));
             var json = JsonConvert.SerializeObject(person);
             var transactionResult = await txn1.Do(
                 new RequestBuilder().WithMutations(new MutationBuilder().SetJson(json))
@@ -152,7 +152,7 @@ namespace Dgraph.tests.e2e.Tests
             using var txn2 = client.NewTransaction();
 
             var personTxn1 = MintAPerson("Alfred Name");
-            var personTxn2 = MintAPerson("Fank Person");
+            var personTxn2 = MintAPerson("Fake Person");
 
             // Name has term and exact indexes, so these shouldn't clash
             var transactionResultTxn1 = await txn1.Mutate(

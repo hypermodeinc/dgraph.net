@@ -5,12 +5,12 @@
 
 namespace Dgraph.Schema
 {
-    public class DrgaphPredicate
+    public class DgraphPredicate
     {
-        public string Predicate { get; set; }
-        public string Type { get; set; }
+        public required string Predicate { get; set; }
+        public required string Type { get; set; }
         public bool Index { get; set; }
-        public List<string> Tokenizer { get; set; }
+        public required List<string> Tokenizer { get; set; }
         public bool Reverse { get; set; }
         public bool Count { get; set; }
         public bool List { get; set; }
@@ -22,15 +22,15 @@ namespace Dgraph.Schema
             string indexFragment = "";
             if (Index)
             {
-                indexFragment = "@index(" + String.Join(",", Tokenizer) + ") ";
+                indexFragment = "@index(" + string.Join(",", Tokenizer) + ") ";
             }
             var reverseFragment = Reverse ? "@reverse " : "";
             var countableFragment = Count ? "@count " : "";
             var typeFragment = List ? $"[{Type}]" : $"{Type}";
             var upsertFragment = Upsert ? "@upsert " : "";
-            var langtagsFragment = Lang ? "@lang " : "";
+            var langTagsFragment = Lang ? "@lang " : "";
 
-            return $"{Predicate}: {typeFragment} {indexFragment}{reverseFragment}{countableFragment}{upsertFragment}{langtagsFragment}.";
+            return $"{Predicate}: {typeFragment} {indexFragment}{reverseFragment}{countableFragment}{upsertFragment}{langTagsFragment}.";
         }
     }
 }

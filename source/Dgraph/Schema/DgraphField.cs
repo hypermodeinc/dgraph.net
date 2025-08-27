@@ -7,7 +7,7 @@ namespace Dgraph.Schema
 {
     public class DgraphField
     {
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         public override string ToString() => Name;
     }

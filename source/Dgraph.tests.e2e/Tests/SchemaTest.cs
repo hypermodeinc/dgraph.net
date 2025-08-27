@@ -33,6 +33,7 @@ namespace Dgraph.tests.e2e.Tests
             AssertResultIsSuccess(response);
 
             var schema = JsonConvert.DeserializeObject<DgraphSchema>(response.Value.Json);
+            schema.Should().NotBeNull();
             this.Assent(schema.ToString(), AssentConfiguration);
         }
 
@@ -53,6 +54,7 @@ namespace Dgraph.tests.e2e.Tests
             AssertResultIsSuccess(response);
 
             var schema = JsonConvert.DeserializeObject<DgraphSchema>(response.Value.Json);
+            schema.Should().NotBeNull();
             this.Assent(schema.ToString(), AssentConfiguration);
         }
 
@@ -68,6 +70,7 @@ namespace Dgraph.tests.e2e.Tests
             AssertResultIsSuccess(response);
 
             var schema = JsonConvert.DeserializeObject<DgraphSchema>(response.Value.Json);
+            schema.Should().NotBeNull();
             this.Assent(schema.ToString(), AssentConfiguration);
         }
 
@@ -78,6 +81,7 @@ namespace Dgraph.tests.e2e.Tests
             AssertResultIsSuccess(response);
 
             var schema = JsonConvert.DeserializeObject<DgraphSchema>(response.Value.Json);
+            schema.Should().NotBeNull();
             this.Assent(schema.ToString(), AssentConfiguration);
         }
 

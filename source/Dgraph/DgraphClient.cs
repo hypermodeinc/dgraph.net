@@ -23,20 +23,23 @@ namespace Dgraph
             return new DgraphClient(channels);
         }
 
-        private readonly List<Api.Dgraph.DgraphClient> dgraphs;
-        private readonly GrpcChannel[] channels;
+        private readonly List<Api.Dgraph.DgraphClient> _clients;
+        private readonly GrpcChannel[] _channels;
 
         private DgraphClient(params GrpcChannel[] channels)
         {
-            this.channels = channels;
-            this.dgraphs = new List<Api.Dgraph.DgraphClient>();
-            foreach (var chan in channels)
-            {
-                this.dgraphs.Add(new Api.Dgraph.DgraphClient(chan));
-            }
+            _channels = channels;
+            _clients = [.. channels.Select(c => new Api.Dgraph.DgraphClient(c))];
         }
 
-        #region IDgraphClient 
+        #region IDgraphClient
+
+#if NETFRAMEWORK
+        Task<Result> IDgraphClient.Login(string user, string password, CallOptions? options)
+        {
+            return ((IDgraphClient)this).LoginIntoNamespace(user, password, 0, options);
+        }
+#endif 
 
         Task<Result> IDgraphClient.LoginIntoNamespace(string user, string password, ulong ns, CallOptions? options)
         {
@@ -55,7 +58,7 @@ namespace Dgraph
             );
         }
 
-        Task<Result> IDgraphClient.Alter(Api.Operation op, CallOptions? options)
+        Task<Result> IDgraphClient.Alter(Operation op, CallOptions? options)
         {
             return DgraphExecute(
                 async (dg) =>
@@ -73,7 +76,7 @@ namespace Dgraph
                 async (dg) =>
                 {
                     var versionResult = await dg.CheckVersionAsync(new Check(), options ?? new CallOptions());
-                    return Result.Ok<string>(versionResult.Tag); ;
+                    return Result.Ok(versionResult.Tag); ;
                 },
                 (rpcEx) => Result.Fail<string>(new ExceptionalError(rpcEx))
             );
@@ -105,7 +108,12 @@ namespace Dgraph
             try
             {
                 // Randomly pick the next client to use.
-                var nextClient = dgraphs[Random.Shared.Next(dgraphs.Count)];
+#if NETFRAMEWORK || NETSTANDARD
+                var nextClient = _clients[RandomPolyfill.Shared.Next(_clients.Count)];
+#else
+                var nextClient = _clients[Random.Shared.Next(_clients.Count)];
+#endif
+
                 return await execute(nextClient);
             }
             catch (RpcException rpcEx)
@@ -137,8 +145,8 @@ namespace Dgraph
         {
             if (!Disposed)
             {
-                this.Disposed = true;
-                foreach (var channel in this.channels)
+                Disposed = true;
+                foreach (var channel in _channels)
                 {
                     channel.Dispose();
                 }

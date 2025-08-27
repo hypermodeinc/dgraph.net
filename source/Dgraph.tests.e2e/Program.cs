@@ -19,7 +19,7 @@ namespace Dgraph.tests.e2e
     {
 
         [Option(ShortName = "t", Description = "Set the tests to actually run.  Can be set multiple times.  Not setting == run all tests.")]
-        public List<string> Test { get; } = new List<string>();
+        public List<string> Test { get; } = [];
 
         [Option(ShortName = "i", Description = "Turn on interactive mode when not running in build server.")]
         public bool Interactive { get; }
@@ -100,9 +100,9 @@ namespace Dgraph.tests.e2e
             TestExecutor = testExecutor;
         }
 
-        private IServiceProvider ServiceProvider;
-        private TestFinder TestFinder;
-        private TestExecutor TestExecutor;
+        private readonly IServiceProvider ServiceProvider;
+        private readonly TestFinder TestFinder;
+        private readonly TestExecutor TestExecutor;
 
         private async Task OnExecuteAsync(CommandLineApplication app)
         {
@@ -111,7 +111,7 @@ namespace Dgraph.tests.e2e
 
             var tests = TestFinder.FindTestNames(Test);
 
-            Log.Information("Begining {NumTests} tests.", tests.Count);
+            Log.Information("Beginning {NumTests} tests.", tests.Count);
 
             // Exceptions shouldn't escape this in normal circumstances.
             var executor = await Execute(tests);
@@ -123,7 +123,7 @@ namespace Dgraph.tests.e2e
             Log.Information("-----------------------------------------");
             Log.Information("Test Results:");
             Log.Information($"Tests Run: {totalRan}");
-            Log.Information($"Tests Succesful: {totalRan - totalFailed}");
+            Log.Information($"Tests Successful: {totalRan - totalFailed}");
             Log.Information($"Tests Failed: {totalFailed}");
             Log.Information("-----------------------------------------");
 
@@ -137,7 +137,7 @@ namespace Dgraph.tests.e2e
         {
             using (ServiceProvider.CreateScope())
             {
-                TestExecutor exec = ServiceProvider.GetService<TestExecutor>();
+                var exec = ServiceProvider.GetRequiredService<TestExecutor>();
                 await exec.ExecuteAll(tests);
                 return exec;
             }

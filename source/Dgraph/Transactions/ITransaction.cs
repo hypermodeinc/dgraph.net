@@ -31,6 +31,9 @@ namespace Dgraph.Transactions
         /// If the mutation fails, then the transaction is discarded and all
         /// future operations on it will fail.
         /// </summary>
+#if NETFRAMEWORK
+        Task<Result<Response>> Mutate(Api.Mutation mutation, CallOptions? options = null);
+#else
         Task<Result<Response>> Mutate(Api.Mutation mutation, CallOptions? options = null)
         {
             var request = new Api.Request();
@@ -38,24 +41,33 @@ namespace Dgraph.Transactions
             request.CommitNow = mutation.CommitNow;
             return Do(request, options);
         }
+#endif
 
         /// <summary>
-        /// Run a mutation using a <see cref="MutationBuilder"/>. 
+        /// Run a mutation using a <see cref="MutationBuilder"/>.
         /// Otherwise identical to Mutate(<see cref="Api.Mutation"/>).
         /// </summary>
+#if NETFRAMEWORK
+        Task<Result<Response>> Mutate(MutationBuilder mutation, CallOptions? options = null);
+#else
         Task<Result<Response>> Mutate(MutationBuilder mutation, CallOptions? options = null)
         {
             return Mutate(mutation.Mutation, options);
         }
+#endif
 
         /// <summary>
         /// Execute a query using a <see cref="RequestBuilder"/>.
         /// Otherwise identical to Do(<see cref="Api.Request"/>).
         /// </summary>
+#if NETFRAMEWORK
+        Task<Result<Response>> Do(RequestBuilder request, CallOptions? options = null);
+#else
         Task<Result<Response>> Do(RequestBuilder request, CallOptions? options = null)
         {
             return Do(request.Request, options);
         }
+#endif
 
         /// <summary>
         /// Execute a query followed by one or more mutations.
@@ -74,7 +86,7 @@ namespace Dgraph.Transactions
 
         /// <summary>
         /// Commit the transaction. IF successful, any mutations in this
-        /// transaction are committed in Dgraph. The transaction can't be 
+        /// transaction are committed in Dgraph. The transaction can't be
         /// used again after a call to Commit.
         /// </summary>
         Task<Result> Commit(CallOptions? options = null);

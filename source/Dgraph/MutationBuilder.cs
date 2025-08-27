@@ -9,7 +9,7 @@ namespace Dgraph
 {
     public class MutationBuilder
     {
-        internal Api.Mutation Mutation = new Api.Mutation();
+        internal Api.Mutation Mutation = new();
 
         public MutationBuilder SetJson(string setJson)
         {

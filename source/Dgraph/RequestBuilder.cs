@@ -1,4 +1,4 @@
-﻿/*
+/*
  * SPDX-FileCopyrightText: © Hypermode Inc. <hello@hypermode.com>
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -7,7 +7,7 @@ namespace Dgraph
 {
     public class RequestBuilder
     {
-        internal Api.Request Request = new Api.Request();
+        internal Api.Request Request = new();
 
         public RequestBuilder WithQuery(string query)
         {

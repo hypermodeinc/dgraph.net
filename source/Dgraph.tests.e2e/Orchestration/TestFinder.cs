@@ -17,21 +17,21 @@ namespace Dgraph.tests.e2e.Orchestration
             ServiceProvider = serviceProvider;
         }
 
-        public IReadOnlyList<string> FindTestNames(IEnumerable<string> prefixes = null)
+        public IReadOnlyList<string> FindTestNames(IEnumerable<string>? prefixes = null)
         {
 
             Type baseTestType = typeof(DgraphDotNetE2ETest);
             var allTestNames = typeof(DgraphDotNetE2ETest).Assembly.GetTypes().Where(t => t.IsSubclassOf(baseTestType)).Select(t => t.Name);
 
-            var tests = prefixes == null || !prefixes.Any()
+            var tests = prefixes?.Any() != true
                 ? allTestNames
                 : allTestNames.Where(tn => prefixes.Any(t => tn.StartsWith(t)));
 
-            return tests.ToList();
+            return [.. tests];
         }
 
         public IReadOnlyList<DgraphDotNetE2ETest> FindTests(IEnumerable<string> testNames) =>
-            testNames.Select(tn => FindTestByName(tn)).ToList();
+            [.. testNames.Select(tn => FindTestByName(tn))];
 
         // This isn't perfect.  I can't see another way though without using
         // something like Autofac.  As is, any new test needs to be registered
@@ -42,13 +42,13 @@ namespace Dgraph.tests.e2e.Orchestration
             switch (name)
             {
                 case "SchemaTest":
-                    return ServiceProvider.GetService<SchemaTest>();
+                    return ServiceProvider.GetRequiredService<SchemaTest>();
                 case "MutateQueryTest":
-                    return ServiceProvider.GetService<MutateQueryTest>();
+                    return ServiceProvider.GetRequiredService<MutateQueryTest>();
                 case "TransactionTest":
-                    return ServiceProvider.GetService<TransactionTest>();
+                    return ServiceProvider.GetRequiredService<TransactionTest>();
                 // case "UpsertTest":
-                //     return ServiceProvider.GetService<UpsertTest>();
+                //     return ServiceProvider.GetRequiredService<UpsertTest>();
                 default:
                     throw new KeyNotFoundException($"Couldn't find test : {name}.  Ensure all tests are registered in {nameof(TestFinder)}");
             }

@@ -30,27 +30,25 @@ namespace Dgraph.tests.e2e.Tests
                 .UsingNamer(new SubdirectoryNamer("Approved"))
                 .UsingReporter((received, approved) =>
                 {
-                    received = System.IO.File.ReadAllText(received);
-                    approved = System.IO.File.ReadAllText(approved);
+                    received = File.ReadAllText(received);
+                    approved = File.ReadAllText(approved);
                     Log.Warning("Expected:\n{approved}\nReceived:\n{received}\n", approved, received);
                 });
             // FIXME: .UsingSanitiser(...) might want to add this to remove versions etc
             // FIXME: when I add this to a build pipeline it needs this turned off when running on the build server
             // .SetInteractive(...);
 
-            EmbeddedProvider = new EmbeddedFileProvider(Assembly.GetAssembly(typeof(DgraphDotNetE2ETest)), "Dgraph.tests.e2e.Tests.Data");
+            EmbeddedProvider = new EmbeddedFileProvider(Assembly.GetAssembly(typeof(DgraphDotNetE2ETest))!, "Dgraph.tests.e2e.Tests.Data");
         }
 
         public async virtual Task Setup()
         {
-            using (var client = await ClientFactory.GetDgraphClient())
+            using var client = await ClientFactory.GetDgraphClient();
+            var result = await client.Alter(
+                new Api.Operation { DropAll = true });
+            if (result.IsFailed)
             {
-                var result = await client.Alter(
-                    new Api.Operation { DropAll = true });
-                if (result.IsFailed)
-                {
-                    throw new DgraphDotNetTestFailure("Failed to clean database in test setup", result);
-                }
+                throw new DgraphDotNetTestFailure("Failed to clean database in test setup", result);
             }
         }
 
@@ -58,29 +56,22 @@ namespace Dgraph.tests.e2e.Tests
 
         public async virtual Task TearDown()
         {
-            using (var client = await ClientFactory.GetDgraphClient())
+            using var client = await ClientFactory.GetDgraphClient();
+            var result = await client.Alter(new Api.Operation { DropAll = true });
+            if (result.IsFailed)
             {
-                var result = await client.Alter(
-                    new Api.Operation { DropAll = true });
-                if (result.IsFailed)
-                {
-                    throw new DgraphDotNetTestFailure("Failed to clean database in test setup", result);
-                }
+                throw new DgraphDotNetTestFailure("Failed to clean database in test setup", result);
             }
         }
 
         protected string ReadEmbeddedFile(string filename)
         {
-            using (var stream = EmbeddedProvider.GetFileInfo(filename).CreateReadStream())
-            {
-                using (var reader = new StreamReader(stream, Encoding.UTF8))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
+            using var stream = EmbeddedProvider.GetFileInfo(filename).CreateReadStream();
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+            return reader.ReadToEnd();
         }
 
-        protected void AssertResultIsSuccess(ResultBase result, string msg = null)
+        protected static void AssertResultIsSuccess(ResultBase result, string? msg = null)
         {
             if (result.IsFailed)
             {

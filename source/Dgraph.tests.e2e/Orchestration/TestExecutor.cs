@@ -10,7 +10,7 @@ namespace Dgraph.tests.e2e.Orchestration
         public int TestsRun = 0;
         public int TestsFailed = 0;
         public IReadOnlyList<Exception> Exceptions => _Exceptions;
-        private List<Exception> _Exceptions = new List<Exception>();
+        private readonly List<Exception> _Exceptions = [];
 
         private readonly TestFinder TestFinder;
         private readonly DgraphClientFactory ClientFactory;
